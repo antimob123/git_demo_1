@@ -1,25 +1,25 @@
 #include "stm32f10x.h"                  // Device header
 
-#define BOOTLOADER_ADDRESS 0x08000000    // ¶¨Òå Bootloader µØÖ·£¬Í¨³£Îª Flash µÄÆğÊ¼µØÖ·
+#define BOOTLOADER_ADDRESS 0x08000000    // // å®šä¹‰ Bootloader åœ°å€ï¼Œé€šå¸¸ä¸º Flash çš„èµ·å§‹åœ°å€
 
 void JumpToBootloader(void)
 {
-    typedef void (*pFunction)(void);  // ¶¨Òåº¯ÊıÖ¸ÕëÀàĞÍ
+    typedef void (*pFunction)(void);  // å®šä¹‰å‡½æ•°æŒ‡é’ˆç±»å‹
     pFunction Jump_To_Bootloader;
-    uint32_t BootloaderStackPointer = *(__IO uint32_t*)BOOTLOADER_ADDRESS;  // »ñÈ¡ Bootloader µÄÕ»¶¥µØÖ·
-    uint32_t BootloaderEntryPoint = *(__IO uint32_t*)(BOOTLOADER_ADDRESS + 4);  // »ñÈ¡ Bootloader µÄÈë¿ÚµØÖ·
+    uint32_t BootloaderStackPointer = *(__IO uint32_t*)BOOTLOADER_ADDRESS;  // è·å– Bootloader çš„æ ˆé¡¶åœ°å€
+    uint32_t BootloaderEntryPoint = *(__IO uint32_t*)(BOOTLOADER_ADDRESS + 4);  // è·å– Bootloader çš„å…¥å£åœ°å€
 
-    // ¹Ø±ÕÖĞ¶Ï
+    // å…³é—­ä¸­æ–­
     __disable_irq();
 
-    // ÖØÖÃÖ÷¶ÑÕ»Ö¸Õë
+    // é‡ç½®ä¸»å †æ ˆæŒ‡é’ˆ
     __set_MSP(BootloaderStackPointer);
 
-    // ÉèÖÃÏòÁ¿±íÆ«ÒÆ¼Ä´æÆ÷Ö¸Ïò Bootloader µÄÏòÁ¿±í
+    // è®¾ç½®å‘é‡è¡¨åç§»å¯„å­˜å™¨æŒ‡å‘ Bootloader çš„å‘é‡è¡¨
     SCB->VTOR = BOOTLOADER_ADDRESS;
 
-    // Ìø×ªµ½ Bootloader µÄÈë¿Úµã
-    Jump_To_Bootloader = (pFunction)BootloaderEntryPoint;   //½« BootloaderEntryPoint µØÖ·×ª»»ÎªÒ»¸öº¯ÊıÖ¸Õë£¬²¢¸³Öµ¸ø Jump_To_Bootloader ±äÁ¿¡£
+    // è·³è½¬åˆ° Bootloader çš„å…¥å£ç‚¹
+    Jump_To_Bootloader = (pFunction)BootloaderEntryPoint;    //å°† BootloaderEntryPoint åœ°å€è½¬æ¢ä¸ºä¸€ä¸ªå‡½æ•°æŒ‡é’ˆï¼Œå¹¶èµ‹å€¼ç»™ Jump_To_Bootloader å˜é‡ã€‚
     Jump_To_Bootloader();
 }
 

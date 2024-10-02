@@ -6,7 +6,7 @@
 static uint16_t	 gUart1ReceStartPtr;
 //static uint16_t  gUart1ReceEndPtr;
 
-void STM32F103_UART1_Init(uint32_t BaudRate)      //ÆäËûĞ¾Æ¬Ìí¼ÓĞÂº¯Êı          
+void STM32F103_UART1_Init(uint32_t BaudRate)      //å…¶ä»–èŠ¯ç‰‡æ·»åŠ æ–°å‡½æ•°         
 {
 	
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
@@ -41,7 +41,7 @@ void STM32F103_UART1_Init(uint32_t BaudRate)      //ÆäËûĞ¾Æ¬Ìí¼ÓĞÂº¯Êı
 
 //
 
-void SendDataToUART1(uint8_t *Data,uint8_t Len)  //²âÊÔ¿ÉÓÃ
+void SendDataToUART1(uint8_t *Data,uint8_t Len)  //æµ‹è¯•å¯ç”¨
 {
 	uint8_t i = 0;
 	
@@ -59,13 +59,13 @@ void SendDataToUART1(uint8_t *Data,uint8_t Len)  //²âÊÔ¿ÉÓÃ
 
 void USART1_SendChar(uint8_t c)
 {
-    while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);   //µÈ´ıµÄÊÇ·¢ËÍÊı¾İ¼Ä´æÆ÷¿ÕÏĞ
+    while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);   //ç­‰å¾…çš„æ˜¯å‘é€æ•°æ®å¯„å­˜å™¨ç©ºé—²
     USART_SendData(USART1, c);
-    while (USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET);    //Ñ­»·µÈ´ıÕû¸öÊı¾İÖ¡·¢ËÍÍê±Ï
+    while (USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET);    //å¾ªç¯ç­‰å¾…æ•´ä¸ªæ•°æ®å¸§å‘é€å®Œæ¯•
 }
 
 
-void USART1_IRQHandler(void)    //²âÊÔ¿ÉÓÃ
+void USART1_IRQHandler(void)    //æµ‹è¯•å¯ç”¨
 {
     u8 recvbyte;	
 	if (USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)
@@ -87,34 +87,29 @@ void USART1_IRQHandler(void)    //²âÊÔ¿ÉÓÃ
 //
 
 
-void ParseUSART1Buffer(void)    // »·ĞÎbuff½âÎöË¼Â· ¿ÉÒÔ¸ù¾İÊı¾İË¢ĞÂµÄÊ±¼äÀ´  µ÷Õûµ÷ÓÃ¼ä¸ô
+void ParseUSART1Buffer(void)    // ç¯å½¢buffè§£ææ€è·¯ å¯ä»¥æ ¹æ®æ•°æ®åˆ·æ–°çš„æ—¶é—´æ¥  è°ƒæ•´è°ƒç”¨é—´éš”
 {
-    uint16_t i = 0;  // ¶¨ÒåÒ»¸ö±éÀúÊı×éµÄË÷Òı
+    uint16_t i = 0;  // å®šä¹‰ä¸€ä¸ªéå†æ•°ç»„çš„ç´¢å¼•
 
-    while (i < USART1_MAX_RECV_LEN - 1)  // ±£Ö¤ÓĞ×ã¹»µÄ×Ö½Ú¶ÁÈ¡£¨·ÀÖ¹Ö¸ÕëÔ½½ç£©
+    while (i < USART1_MAX_RECV_LEN - 1)  // ä¿è¯æœ‰è¶³å¤Ÿçš„å­—èŠ‚è¯»å–ï¼ˆé˜²æ­¢æŒ‡é’ˆè¶Šç•Œï¼‰
     {
-        // ¼ì²éÊÇ·ñÕÒµ½°üÍ· A5 5A
-        if (gUSART1_RxBuf[i] == 0xA5 && gUSART1_RxBuf[(i + 1) % USART1_MAX_RECV_LEN] == 0x5A) 
+        if (gUSART1_RxBuf[i] == 0xA5 && gUSART1_RxBuf[(i + 1) % USART1_MAX_RECV_LEN] == 0x5A)   // æ£€æŸ¥æ˜¯å¦æ‰¾åˆ°åŒ…å¤´ A5 5A
         {
-            // ¼ÆËãµÚÈı¸ö×Ö½ÚµÄË÷ÒıÎ»ÖÃ£¬´¦Àí¿çÔ½»º³åÇø±ß½çµÄÇé¿ö
-            uint16_t thirdByteIndex = (i + 3) % USART1_MAX_RECV_LEN;
+            uint16_t thirdByteIndex = (i + 3) % USART1_MAX_RECV_LEN;         // è®¡ç®—ç¬¬ä¸‰ä¸ªå­—èŠ‚çš„ç´¢å¼•ä½ç½®ï¼Œå¤„ç†è·¨è¶Šç¼“å†²åŒºè¾¹ç•Œçš„æƒ…å†µ
             
-            // ¶ÁÈ¡µÚÈı¸ö×Ö½ÚµÄÖµ
-            volatile uint8_t thirdByteValue = gUSART1_RxBuf[thirdByteIndex];  // ÔÚÕâÀï¿ÉÒÔ´¦ÀíµÚÈı¸ö×Ö½ÚµÄÖµ»òÕß½øĞĞÆäËû²Ù×÷
-            //¸ù¾İĞèÇóµ÷Õû
-           
-            // ¸üĞÂË÷Òı£¬Ìø¹ıÒÑ´¦ÀíµÄ×Ö½Ú£¬¼ÌĞøÑ°ÕÒÏÂÒ»¸ö°üÍ·
-            i = (i + 4) % USART1_MAX_RECV_LEN;  // ¸ù¾İĞèÒª½âÎöµÄ³¤¶ÈÀ´µ÷Õû²½³¤
+            // è¯»å–ç¬¬ä¸‰ä¸ªå­—èŠ‚çš„å€¼  æ ¹æ®éœ€æ±‚è°ƒæ•´
+            volatile uint8_t thirdByteValue = gUSART1_RxBuf[thirdByteIndex];  // åœ¨è¿™é‡Œå¯ä»¥å¤„ç†ç¬¬ä¸‰ä¸ªå­—èŠ‚çš„å€¼æˆ–è€…è¿›è¡Œå…¶ä»–æ“ä½œ
+
+            // æ›´æ–°ç´¢å¼•ï¼Œè·³è¿‡å·²å¤„ç†çš„å­—èŠ‚ï¼Œç»§ç»­å¯»æ‰¾ä¸‹ä¸€ä¸ªåŒ…å¤´
+            i = (i + 4) % USART1_MAX_RECV_LEN;  // æ ¹æ®éœ€è¦è§£æçš„é•¿åº¦æ¥è°ƒæ•´æ­¥é•¿
         }
         else
         {
-            // Èç¹ûÎ´ÕÒµ½°üÍ·£¬¼ÌĞø²éÕÒÏÂÒ»¸ö×Ö½Ú
-            i = (i + 1) % USART1_MAX_RECV_LEN;
+            i = (i + 1) % USART1_MAX_RECV_LEN;    // å¦‚æœæœªæ‰¾åˆ°åŒ…å¤´ï¼Œç»§ç»­æŸ¥æ‰¾ä¸‹ä¸€ä¸ªå­—èŠ‚
         }
     }
 
-    // ½âÎöÍê³Éºó£¬½«Ö¸Õë gUart1ReceStartPtr ÖØÖÃÎª 0x00
-    gUart1ReceStartPtr = 0;
+    gUart1ReceStartPtr = 0;             // è§£æå®Œæˆåï¼Œå°†æŒ‡é’ˆ gUart1ReceStartPtr é‡ç½®ä¸º 0x00
 }
 
 void Serial_SendByte(uint8_t Byte)

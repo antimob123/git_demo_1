@@ -7,11 +7,11 @@
 
 volatile uint8_t i = 0x00;
 
-///////////////////////////////////////////////�������ò���///////////////////////////////////////////
+///////////////////////////////////////////////串口配置部分///////////////////////////////////////////
 
-u8 gUSART1_RxBuf[USART1_MAX_RECV_LEN] = {0};         //USART1_MAX_RECV_LEN ȥ.h�ļ���дbuff����
+u8 gUSART1_RxBuf[USART1_MAX_RECV_LEN] = {0};         //USART1_MAX_RECV_LEN 去.h文件去填写 buff 长度
 typedef void (*UART_InitFunc)(uint32_t BaudRate);  
-UART_InitFunc UART1_init = STM32F103_UART1_Init;     //��оƬ��������   ��:mm32f0120_UART1_Init
+UART_InitFunc UART1_init = STM32F103_UART1_Init;     //更换芯片更改这里 例:STM32F103_UART1_Init
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -33,8 +33,8 @@ int main(void)
 //		for(int i=0;i<999999;i++ )	   {	
 //	   }
 //        #endif	
-//        JumpToBootloader();  // ��ת�� Bootloader
-		printf("ERRO\r\n");
+//        JumpToBootloader();      //跳转到 Bootloader
+		printf("ERRO\r\n");        //报错
 //    }	
     }
 		
